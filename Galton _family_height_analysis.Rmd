@@ -1,5 +1,5 @@
 ---
-title: "Research Review - Individual Report - 2831496 Portfolio"
+title: "The statistical analysis of central and dispersion measures of the Galton Families"
 date: "2024-04-09"
 output:
   html_document: default
@@ -8,7 +8,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-## **The statistical analysis of central and dispersion measures of the Galton Families**
 
 ## **Introduction**
 
