@@ -1,0 +1,304 @@
+---
+title: "Research Review - Individual Report - 2831496 Portfolio"
+date: "2024-04-09"
+output:
+  html_document: default
+  pdf_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+## **The statistical analysis of central and dispersion measures of the Galton Families**
+
+## **Introduction**
+
+This report is to describe the height distribution of the Galton Families and see if there is a correlation between the heights of parents and their children in each family. The dataset is extracted from the HisData, with a total of 204 families. Among these families, there are 204 fathers,204 mothers, 481 sons and 453 daughters in total.
+
+## **Problems**
+
+First of all, The main problem of the analysis is the unequal length of rows. During the analysis, 2 new columns called ‘sons’ and ‘daughters’ are created based on the filtered result of columns ‘gender’ and ‘childHeight’. Secondly, since there may be multiple sons or daughters in each family, there can be duplicated heights of fathers and mothers as well. As a result, filtering out the duplicated heights of fathers and mothers is another problem during the analysis. Thirdly, combining different columns into one data frame consisting of dads, mothers, sons and daughters can be challenging. Data loss can occur during the merging process.
+
+## **Methods**
+
+R will be used to generate and analyse the data. Packages such as \`tidyverse\`, \`dslabs\`, ‘dplyr’ and ‘ggplot2’ will be used for the analysis. To reshape and consolidate the datasets, ‘dplyr’ is used to trim off the unwanted rows columns and combine the columns of ‘father’ and ‘mother’ , along with the columns of ‘sons’ and daughters’ into 2 new datasets. During the consolidation process, the columns of ‘gender’ and ‘childHeight’ are filtered based on male and female and 2 new columns called ‘sons’ and daughters’ are created as a result. Besides, to tackle the problem of filtering out duplicated heights of fathers and mothers, the distinct method is used. Given the family ID of each family, the duplicated heights of fathers and mothers can be excluded based on the duplicated family ID. Therefore, the result will not be affected even if some heights are the same for different families. Furthermore, to create the charts, ‘ggplot2’ is used to create scatterplots. This analysis was mainly conducted subject to some guided questions.
+
+## **Results and Discussion**
+
+**1. Load the GaltonFamilies data from the HistData. The children in each family are listed by gender and then by height.**
+
+```{r}
+#load datasets and install R packages
+#install.packages("HistData") 
+library(HistData)
+library(tidyverse)
+library(dslabs)
+
+data("GaltonFamilies")
+head(GaltonFamilies)
+
+
+```
+
+**2. Create a dataset called galton_heights by picking a male and female at random.**
+
+```{r}
+#install.packages("dplyr")
+#install.packages("rowr")
+library(dplyr)
+
+galton_heights <- select( GaltonFamilies, -1:-6)
+
+```
+
+**3 a) The total heights**
+
+```{r}
+sons = filter(GaltonFamilies, gender=='male')
+daughters = filter(GaltonFamilies, gender=='female')
+sum(GaltonFamilies$childHeight)
+sum(sons$childHeight)
+sum(daughters$childHeight) 
+```
+
+The total height of all Galton families is 62340.7 inches. The total height of sons is 33301.6 inches while the total height of daughters is 29039.1 inches. The total height of the sons is 4262.5 inches more. The son's height makes up 53.42% of the total height, while the daughter's height makes up 46.58% of the total height.
+
+**3 b) The mean**
+
+```{r}
+mean(GaltonFamilies$childHeight)
+mean(sons$childHeight)
+mean(daughters$childHeight)
+```
+
+The average height across the whole Galton family is 68.74593 inches, with males averaging 69.2341 inches and females averaging 64.10397 inches. This indicates sons are taller on average than daughters in this dataset.
+
+**3 c) The variance**
+
+```{r}
+var(GaltonFamilies$childHeight)
+var(sons$childHeight)
+var(daughters$childHeight)
+```
+
+The variance, which measures the spread of the height in this dataset, is 12.81104 for all Galton families, 6.884877 for sons, and 5.549099 for daughters. It shows that heights are more dispersed around the mean for all Galton families, in comparison to considering genders separately, with sons showing slightly more variance than daughters.
+
+**3 d) The standard deviation**
+
+```{r}
+sd(GaltonFamilies$childHeight)
+sd(sons$childHeight)
+sd(daughters$childHeight)
+```
+
+The standard deviation follows directly from the variance, with all Galton families at 3.579251, sons at 2.623905, and daughters at 2.355653. It measures how much height differs from the mean value, indicating that heights for the total population vary more than for each gender considered separately and sons weight is more spread than males.
+
+**3 e) The mode**
+
+```{r}
+library(modeest)
+mlv(GaltonFamilies$childHeight, method = "mfv")
+mlv(sons$childHeight,  method = "mfv")
+mlv(daughters$childHeight, method = "mfv")
+```
+
+The modes are 65 inches for total height, 70 for sons, and 65 for daughters. It shows that most people are 65 inches tall, most sons are 70 inches tall and most women are 65 inches tall.
+
+**3 f) The median**
+
+```{r}
+median(GaltonFamilies$childHeight)
+median(sons$childHeight)
+median(daughters$childHeight)
+```
+
+The median is 66.5 for total height, 69.2 for males and 64 for females. The median is very close to the mean for total, males and females, which suggests that the height of the whole data set is evenly distributed.
+
+**3 g) The first quartile**
+
+```{r}
+Firstquartile_total = quantile(GaltonFamilies$childHeight, .25)
+Firstquartile_sons = quantile(sons$childHeight, .25)
+Firstquartile_daughters = quantile(daughters$childHeight, .25)
+unname(Firstquartile_total)
+unname(Firstquartile_sons)
+unname(Firstquartile_daughters)
+```
+
+The first Quartile (Q1) is 64 inches for total height, 67.5 inches for sons, and 62.5 inches for daughters. This quartile marks the height below which 25% of the observations fall, indicating a lower bound of height distribution.
+
+**3 h) The third quartile**
+
+```{r}
+Thirdquartile_total = quantile(GaltonFamilies$childHeight, .75)
+Thirdquartile_sons = quantile(sons$childHeight, .75)
+Thirdquartile_daughters = quantile(daughters$childHeight, .75)
+unname(Thirdquartile_total)
+unname(Thirdquartile_sons)
+unname(Thirdquartile_daughters)
+```
+
+The third Quartile (Q3) is 69.7 inches for the total, 71 inches for sons and 65.5 inches for daughters. This Quartile marks the height above which 25% of the observations fall, indicating an upper bound of height distribution. The interquartile range, which is the difference between the third and first Quartiles, is 5.7 for all Galton Families and 3.5 for males and 3 for females.
+
+**3 i) The interquartile**
+
+```{r}
+Interquartile_total = quantile(GaltonFamilies$childHeight, .75)-quantile(GaltonFamilies$childHeight, .25)
+Interquartile_sons = quantile(sons$childHeight, .75)-quantile(sons$childHeight, .25)
+Interquartile_daughters = quantile(daughters$childHeight, .75)-quantile(daughters$childHeight, .25)
+unname(Interquartile_total)
+unname(Interquartile_sons)
+unname(Interquartile_daughters)
+```
+
+The interquartile range measures the middle spread of the dataset, indicating that the middle 50% of heights spread out almost the same for sons and daughters, while it is a bit more diverse for all families.
+
+**4. Derive the histogram and for total height, male height, and female height.**
+
+```{r}
+hist(GaltonFamilies$childHeight, main="Histogram of Total", xlab="Total Height")
+hist(sons$childHeight, main="Histogram of Males", xlab="Males Height")
+hist(daughters$childHeight, , main="Histogram of Females", xlab=" Females")
+
+```
+
+The histograms for all Galton families, sons and daughters show that they are all normally distributed. For all families, most family members are between 62.5 inches to 72.5 inches tall. For sons, most people are between 62.5 inches to 72.5 inches tall while most daughters are between 62.5 inches to 65 inches tall.
+
+**5. Plot a box plot and study the heights of mothers, daughters, fathers and sons.**
+
+```{r}
+library(dplyr)
+
+# Filter father and mother
+father_and_mother_df <- select(GaltonFamilies,-4:-8)
+father_and_mother_df <- mutate(father_and_mother_df, ID = row_number())
+father_and_mother_df = distinct(father_and_mother_df, family, .keep_all = TRUE)
+df <- data.frame(x = seq(1, 934))
+names(df)[1] <- "ID"
+father_and_mother_df  <- merge(father_and_mother_df ,df,by=c("ID"), all=TRUE)
+
+# Filter sons
+sons <- filter(GaltonFamilies, gender == 'male')
+sons_df <- select(sons, -1, -2:-7)  
+sons_df <- mutate(sons_df, ID = row_number())
+
+
+# Filter daughters
+daughters <- filter(GaltonFamilies, gender == 'female')
+daughters_df <- select(daughters, -1, -2:-7) 
+daughters_df <- mutate(daughters_df, ID = row_number())
+
+ 
+# Merge sons and daughters
+sons_and_daughters_df <- merge(sons_df, daughters_df, by = "ID", all = TRUE)
+names(sons_and_daughters_df)[2] <- "sons"
+names(sons_and_daughters_df)[3] <- "daughters"
+
+# Merge father_and_mother_df and sons_df
+merged_df <- full_join(father_and_mother_df, sons_and_daughters_df, by = "ID")
+names(merged_df)[3] <- "fathers"
+names(merged_df)[4] <- "mothers"
+
+
+boxplot(father_and_mother_df$father,father_and_mother_df$mother,sons_and_daughters_df$sons,sons_and_daughters_df$daughter, names=c('fathers', 'mothers', 'sons', 'daughters'))
+
+```
+
+The boxplot shows the distribution for the heights of fathers, mothers, sons and daughters. Boxplots display the maximum, median and third quartile as well as the interquartile range and outliers of a data set (Marmolejo-Ramos and Tian, 2010). As shown on the graph, the distributions of fathers' heights, mothers' heights, sons' heights and daughters’ heights are symmetric. To further break down the boxplots, it can be said that the distributions of fathers and sons are very close, they both have very close maximum, Q3, median, Q1 and minimum. The heights of fathers and sons are spread similarly. whiskers and boxes. On the other hand, the distribution of mothers and daughters is less similar. The maximum, Q3, and median are slightly higher than the mothers’ , but Q1 and minimum are slightly lower. Daughters are taller than mothers on average. In general, the median lines of fathers’ and sons’ boxplots lie outside of the box of mothers’ and daughters’, which indicates a stark difference in heights between males (fathers and sons)and females (mothers and daughters).
+
+However, some outliers exist among fathers, mothers, sons and daughters respectively, which may further affect the analysis result of scatter plot, correlation coefficient and confidence level. Outliers in a dataset are defined to be a subset that appears to be inconsistent with the remaining datasets. (Sim, Gan and Chang, 2005). Any heights that fall outside of the range of whiskers may be considered potential outliers. (Walfish, 2006) According to the boxplot, the distribution of outliers of fathers and mothers are quite similar, they are both outside 1.5 times the interquartile range above the upper quartile and below the lower quartile. On the other hand, the outliers of mothers and daughters are more dispersed from the interquartile range, which can pose a slight effect on the analysis of their heights.
+
+**6. Make a scatterplot for heights between mothers and daughters, mothers and sons, fathers and daughters, and fathers and sons.**
+
+```{r}
+library(ggplot2)
+
+mothers_and_daughters <- ggplot(merged_df) +
+  geom_point(aes(x = mothers, y = daughters), na.rm = TRUE)+geom_smooth(aes(x = mothers, y = daughters), method = "lm", se = FALSE, na.rm = TRUE) + xlab("mothers") + ylab("daughters")
+ 
+mothers_and_sons <- ggplot(merged_df) +
+	geom_point(aes(x = mothers, y = sons), na.rm = TRUE)+
+  geom_smooth(aes(x = mothers, y = sons), method = "lm", se = FALSE, na.rm = TRUE) +xlab("mothers") + ylab("sons") 
+ 
+fathers_and_daughters <- ggplot(merged_df) +
+	geom_point(aes(x = fathers , y = daughters),na.rm = TRUE)+
+  geom_smooth(aes(x = fathers , y = daughters), method = "lm", se = FALSE, na.rm = TRUE) + xlab("fathers") +   ylab("daughters") 
+
+fathers_and_sons <- ggplot(merged_df) +
+	geom_point(aes(x = fathers , y = sons), na.rm = TRUE)+geom_smooth(aes(x = fathers , y = sons), method = "lm", se = FALSE, na.rm = TRUE) +xlab("fathers")+ ylab("sons") 
+
+mothers_and_daughters
+mothers_and_sons
+fathers_and_daughters
+fathers_and_sons
+
+```
+
+The scatter plot provides information about the direction and strength of the relationship between the two variables, which are heights between mothers and daughters, mothers and sons, fathers and daughters as well as fathers and sons in this analysis(Cooksey and Cooksey, 2020). A regression line can be plotted in each scatterplot to see the trend of each relationship.
+
+For the relationship of heights between mothers and daughters, the scatterplot shows a low positive correlation. In general, the taller mothers are, the taller daughters can be. However, there isn’t an obvious trend between 2 variables. For the relationship between mothers and sons, the scatterplot shows a low negative correlation. It can still said that the shorter the moms are, the taller the sons can be. However, the trend isn’t obvious as well. For the relationship between fathers and daughters, the scatterplot indicates a moderate positive correlation. Even though the dots are spread out from the regression line, it can still be said that the taller the fathers are, the taller the daughters are in general. For the relationship between fathers and sons, the scatterplot indicates a moderate positive correlation. Similar to the relationship between fathers and daughters, sons tend to be taller with taller fathers. Generally speaking, Fathers' height is a more crucial factor in children's height.
+
+**7. Compute the correlation in heights between mothers and daughters, mothers and sons, fathers and daughters, and fathers and sons.**
+
+```{r}
+#install.packages("ggplot2")
+#install.packages("corrplot")
+library(corrplot)
+#calculate cor of each relationship
+
+correlation_between_mothers_and_daughters <- cor(merged_df[c("mothers", "daughters")], use="na.or.complete")
+correlation_between_mothers_and_sons <- cor(merged_df[c("mothers", "sons")], use = "na.or.complete")
+correlation_between_fathers_and_daughters <- cor(merged_df[c("fathers", "daughters")], use = "na.or.complete")
+correlation_between_fathers_and_sons <- cor(merged_df[c("fathers", "sons")], use = "na.or.complete")
+correlation_between_fathers_and_daughters
+correlation_between_fathers_and_sons
+correlation_between_mothers_and_daughters
+correlation_between_mothers_and_sons
+
+
+```
+
+The correlation measures the existence, direction and strength of the linear relationship between fathers and daughters, fathers and sons, mothers and daughters as well as mothers and sons. Correlation and regression shown in scatterplot are different, but not mutually exclusive. Regression may be used for prediction whereas correlation can be used to determine the degree of association. (Asuero, Sayago and González, 2006.) The correlation coefficient between fathers and daughters is 0.5125343, which is between to 0.5 to 0.7. It indicates that there is a moderate positive correlation between fathers and daughters. The correlation coefficient between fathers and sons is 0.3932233 which is between 0.3 to 0.5. It indicates s a low positive correlation between fathers and sons. The correlation coefficient between mothers and daughters is 0.05161345, which is lower than 0.3, it shows a negligible correlation between mothers and daughters. The correlation coefficient between mothers and sons is -0.1312524, which is between 0 to -0.3, it also shows a neglibible correlation between mothers and sons. As shown by the correlation coefficients, the heights of fathers are the determinant of children’s heights, even though the relationship isn’t strong (0.7 to 1). The effect of mothers’ heights on children is less obvious, as the correlation coefficients are a lot smaller.
+
+**8. Now fit a linear model for each metric and use the confint function to compare the estimates.**
+
+```{r}
+
+mothers_and_daughters <-  lm(formula =mothers ~ daughters, data = merged_df)
+mothers_and_sons <-  lm(formula = mothers ~ sons, data = merged_df)
+fathers_and_daughters <-  lm(formula = fathers ~ daughters, data = merged_df)
+fathers_and_sons <-  lm(formula = fathers ~ sons, data = merged_df)
+
+confint(mothers_and_daughters, level = 0.95)
+confint(mothers_and_sons, level = 0.95)
+confint(fathers_and_daughters, level = 0.95)
+confint(fathers_and_sons, level = 0.95)
+
+```
+
+The confidence level provides a range of possible values within which, to a certain extent, to find the statistical measure of the population.( Simundic, 2008). The confidence interval’s lower and upper bounds between mothers’ heights and daughters’ heights are 48.6156077 and 73.6250073 respectively. This confidence interval suggests that, with a 95% level of confidence, the true average height of daughters in the Galton family falls within the range of 48.6156077 and 73.6250073, based on the heights of their mothers. The confidence interval’s lower and upper bounds between mothers’ heights and sons’ heights are 60.7093351 and 84.69822737. Likewise, the confidence interval indicates that it is 95% confident the true average height of sons in the Galton family falls within the range of 60.7093351 and 84.6982273, based on the heights of their mothers.
+
+The confidence interval’s lower and upper bounds between fathers’ heights and daughters’ heights are 41.0338536 and 56.0330640 respectively. This confidence interval suggests that, with a 95 % confidence, the true average height of daughters in the Galton family falls within the range of 41.0338536 and 56.0330640, based on the heights of their fathers. The confidence interval’s lower and upper bounds between fathers’ heights and sons’ heights are 45.6639067 and 61.5464946. Similarly, this confidence interval shows that, with a 95% confidence, the true average height of sons in the Galton family falls within the range of 45.6639067 and 61.5464946, based on the heights of their fathers.
+
+## **Conclusion**
+
+Based on the research findings, it is found that the heights of the entire Galton family dataset are normally distributed. The majority of individuals are between 62.5 inches to 72.5 inches tall. On average, sons in the Galton families are 5.13013 taller than daughters. The average height for sons is 69.2341 inches, while for daughters it is 64.10397 inches.
+
+In terms of the impact of parents’ heights on children, The heights of fathers and sons in the Galton families show a strong similarity in their distribution, with similar maximums, medians, quartiles, and minimums. The heights of daughters and mothers also have similarities, even though with slightly higher medians and maximums compared to mothers. The heights of fathers and sons have a moderately strong positive relationship, indicating that the taller fathers are, the taller sons are. The same relationship exists between fathers and daughters. However, the relationship between mothers and sons as well as mothers and daughters are relatively weak. The correlation coefficients between fathers and daughters, as well as fathers and sons, indicate moderate relationships. On the other hand, the coefficients between mothers and daughters, as well as mothers and sons, indicate weak relationships. Confidence intervals provide ranges within which the true average heights of sons and daughters can be estimated based on the heights of their fathers and mothers, respectively.
+
+To sum up, the analysis suggests there is a correlation between the heights of parents and their children in Galton families. Sons tend to be taller than daughters on average, and the heights of fathers have a stronger influence on the heights of their children compared to the heights of mothers.
+
+(2042 words)
+
+## **References**
+
+Marmolejo-Ramos, F. and Tian, T.S., 2010. The shifting boxplot. A boxplot based on essential summary statistics around the mean. International Journal of Psychological Research, 3(1), pp.37-45.
+
+Sim, C.H., Gan, F.F. and Chang, T.C., 2005. Outlier labeling with boxplot procedures. *Journal of the American Statistical Association*, *100*(470), pp.642-652.
+
+Walfish, S., 2006. A review of statistical outlier methods. *Pharmaceutical technology*, *30*(11), p.82.
+
+Cooksey, R.W. and Cooksey, R.W., 2020. Descriptive statistics for summarising data. *Illustrating statistical procedures: Finding meaning in quantitative data*, pp.61-139.
+
+Simundic, A.M., 2008. Confidence interval. *Biochemia Medica*, *18*(2), pp.154-161.
+
+Asuero, A.G., Sayago, A. and González, A.G., 2006. The correlation coefficient: An overview. *Critical reviews in analytical chemistry*, *36*(1), pp.41-59.
